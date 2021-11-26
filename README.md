@@ -8,14 +8,14 @@ The program uses 4 files as input, and a single file as output:
 
 | filename       | description                                                  |
 | -------------- | ------------------------------------------------------------ |
-| countries.json | list of formattings for countries, this will use the keys from the csv file to format the label. |
-| example.csv    | file with example addresses, goal is to have one address per country. |
-| labels.csv     | list of labels, their size and other characteristics of the labels. |
+| countries.json | list of formattings for countries, this will use the keys from the tsv file to format the label. |
+| example.tsv    | file with example addresses, goal is to have one address per country. |
+| labels.tsv     | list of labels, their size and other characteristics of the labels. |
 | mappings.json  | mapping from column names to keys used in the application.   |
 
 ## Keys used in the code
 
-You will need to map your csv address book to keys that are used in the application. The `example.csv` file will show you a simple spreadsheet that can be used with the default `mappings.json`. The following keys are used:
+You will need to map your tsv address book to keys that are used in the application. The `example.tsv` file will show you a simple spreadsheet that can be used with the default `mappings.json`. The following keys are used:
 
 | key        | meaning                                                      |
 | ---------- | ------------------------------------------------------------ |
@@ -37,13 +37,13 @@ The application takes the following arguments (all of them will have defaults)
 | argument                                                     | description              | default |
 | ------------------------------------------------------------ | ------------------------ | ------- |
 | --help<br />-h |show this help message and exit | |
-| --labels [LABELS]<br />-l [LABELS] | file with label definitions | labels.csv |
+| --labels [LABELS]<br />-l [LABELS] | file with label definitions | labels.tsv |
 | --brand [BRAND]<br />-b [BRAND]                              | brand for address labels | Avery   |
 | --number [NUMBER]<br />-n [NUMBER] | label to use for printing | 5160 |
 | --padding [PADDING]<br />-p [PADDING] | extra padding inside the label | 4 |
 | --font [FONT]<br />-f [FONT] | font to use for label | Times-Roman |
 | --drawbox<br />-d |draw a box around the label | false |
-| --input [INPUT]<br />-i [INPUT] | csv file with addresses | address.csv |
-| --mappings [MAPPINGS]<br />-m [MAPPINGS] | file with mappings from csv to address format | mappings.json |
+| --input [INPUT]<br />-i [INPUT] | tsv file with addresses | address.tsv |
+| --mappings [MAPPINGS]<br />-m [MAPPINGS] | file with mappings from tsv to address format | mappings.json |
 | --country [COUNTRY]<br/>-c [COUNTRY] |country to not add to label and use for addresses with no country specified | USA |
 | --output [OUTPUT]<br />-o [OUTPUT] | pdf file that labels are written to | labels.pdf |

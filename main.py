@@ -118,9 +118,9 @@ def get_field(header, row, name, default=""):
 
 def get_name(header, row):
     """
-    Given the CSV file, return the name. The name is either display
+    Given the tsv file, return the name. The name is either display
     name, full name, or concatenation of first and last name.
-    :param header: header of the CSV file to find column names.
+    :param header: header of the tsv file to find column names.
     :param row: the row with the address information.
     :return: the full name of the person to print.
     """
@@ -151,8 +151,8 @@ def get_address(header, row):
 
 def load_label(filename, brand, number):
     header = None
-    with open(filename, newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter='\t', quotechar='"')
+    with open(filename, newline='') as tsvfile:
+        reader = csv.reader(tsvfile, delimiter='\t', quotechar='"')
         for row in reader:
             if not header:
                 header = row
@@ -192,12 +192,12 @@ def main():
                         help='draw a box around the label')
     parser.add_argument('--font', '-f', type=str, nargs='?', default="Times-Roman",
                         help='font to use for label ("Times-Roman")')
-    parser.add_argument('--input', '-i', type=str, nargs='?', default="address.csv",
-                        help='csv file with addresses (address.csv)')
-    parser.add_argument('--labels', '-l', type=str, nargs='?', default="labels.csv",
-                        help='file with label definitions (labels.csv)')
+    parser.add_argument('--input', '-i', type=str, nargs='?', default="address.tsv",
+                        help='tsv file with addresses (address.tsv)')
+    parser.add_argument('--labels', '-l', type=str, nargs='?', default="labels.tsv",
+                        help='file with label definitions (labels.tsv)')
     parser.add_argument('--mappings', '-m', type=str, nargs='?', default="mappings.json",
-                        help='file with mappings from csv to address format')
+                        help='file with mappings from tsv to address format')
     parser.add_argument('--number', '-n', type=str, nargs='?', default="5160",
                         help='label to use for printing (5160)')
     parser.add_argument('--output', '-o', type=str, nargs='?', default="labels.pdf",
@@ -235,11 +235,11 @@ def main():
             font = "Times-Roman"
 
     # load mappings
-    csv_mappings = json.load(open(args.mappings, "r"))
+    tsv_mappings = json.load(open(args.mappings, "r"))
 
-    # load csv file and print each label
-    with open(args.input, newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter='\t', quotechar='"')
+    # load tsv file and print each label
+    with open(args.input, newline='') as tsvfile:
+        reader = csv.reader(tsvfile, delimiter='\t', quotechar='"')
         count = 0
         header = None
         total = 0
@@ -248,7 +248,7 @@ def main():
                 header = []
                 for s in row:
                     s = s.lower().replace(" ", "")
-                    header.append(csv_mappings.get(s, s))
+                    header.append(tsv_mappings.get(s, s))
                 continue
 
             address = get_address(header, row)
