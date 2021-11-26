@@ -1,0 +1,12 @@
+{
+    "firstname": "firstname",
+    "lastname": "lastname",
+    "displayname": "fullname",
+    "address": "address1",
+    "address2": "address2",
+    "address3": "address3",
+    "city": "city",
+    "state": "state",
+    "postalcode": "postalcode",
+    "country": "country"
+}

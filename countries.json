@@ -1,0 +1,97 @@
+[
+  {
+    "country": [ "Belgium", "BE" ],
+    "format": [
+      "{address1}",
+      "{address2}",
+      "{address3}",
+      "{postalcode} {city}",
+      "{country}"
+    ]
+  }, {
+    "country": [ "Canada", "CA"],
+    "format": [
+      "{address1}",
+      "{address2}",
+      "{address3}",
+      "{city}, {state}  {postalcode}",
+      "{country}"
+    ]
+  }, {
+    "country": [ "Finland", "FI" ],
+    "format": [
+      "{address1}",
+      "{address2}",
+      "{address3}",
+      "{postalcode} {city}",
+      "{country}"
+    ]
+  }, {
+    "country": [ "Italy", "IT" ],
+    "format": [
+      "{address1}",
+      "{address2}",
+      "{address3}",
+      "{postalcode} {city}",
+      "{country}"
+    ]
+}, {
+    "country": [ "Netherlands", "NL" ],
+    "format": [
+      "{address1}",
+      "{address2}",
+      "{address3}",
+      "{postalcode} {city}",
+      "{country}"
+    ]
+  }, {
+    "country": [ "Portugal", "PT" ],
+    "format": [
+      "{address1}",
+      "{address2}",
+      "{address3}",
+      "{postalcode} {city}",
+      "{country}"
+    ]
+  }, {
+    "country": [ "South Korea", "Korea Rep", "SK"],
+    "format": [
+      "{address1}",
+      "{address2}",
+      "{address3}",
+      "{city}",
+      "{state}",
+      "{postalcode}",
+      "{country}"
+    ]
+  }, {
+    "country": [ "Switzerland", "CH" ],
+    "format": [
+      "{address1}",
+      "{address2}",
+      "{address3}",
+      "{postalcode} {city}",
+      "{country}"
+    ]
+}, {
+    "country": [ "United Kingdom", "UK"],
+    "format": [
+      "{address1}",
+      "{address2}",
+      "{address3}",
+      "{city}",
+      "{state}",
+      "{postalcode}",
+      "{country}"
+    ]
+  }, {
+    "country": [ "United States of America", "USA", "US"],
+    "format": [
+      "{address1}",
+      "{address2}",
+      "{address3}",
+      "{postalcode} {state}, {city}",
+      "{country}"
+    ]
+  }
+]
