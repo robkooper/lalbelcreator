@@ -2,6 +2,8 @@
 
 This will take a CSV file with addresses and create labels. The labels will be formatted for each country, and will be sized to fit on the label itself. To create a PDF with labels in your address book, you will need to export the addressbook as a CSV file, and run `python main.py`. This will generate an output file called `labels.pdf` with all your addresses formatted for Avery 5160 labels. You can print this file and attach the labels to your cards.
 
+![example labels](example.png)
+
 # Input Files
 
 The program uses 4 files as input, and a single file as output:
