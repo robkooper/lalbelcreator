@@ -215,7 +215,7 @@ def main():
         x["country"] = [s.lower() for s in x["country"]]
 
     padding = 4
-    fontsizes = [16, 14, 12]
+    fontsizes = [16, 14, 12, 10, 8, 6, 4]
 
     # create the canvas
     canvas = Canvas(args.output, pagesize=(label["paper"]["width"], label["paper"]["height"]))
