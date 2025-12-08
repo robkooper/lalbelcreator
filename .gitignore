@@ -3,3 +3,4 @@ address.tsv
 labels.pdf
 venv
 .idea/
+.DS_Store

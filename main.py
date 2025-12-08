@@ -6,16 +6,18 @@ import json
 
 from reportlab.lib.colors import black
 from reportlab.lib.units import toLength
-from reportlab.pdfgen.canvas import Canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen.canvas import Canvas
 
 
 def print_label(canvas, font, fontsizes, padding, data, label, count, drawlabel):
-    x = label["margin"]["left"] + \
-        count % label["across"] * (label["size"]["width"] + label["padding"]["left"])
-    y = label["margin"]["top"] + \
-        count // label["across"] * (label["size"]["height"] + label["padding"]["top"])
+    x = label["margin"]["left"] + count % label["across"] * (
+        label["size"]["width"] + label["padding"]["left"]
+    )
+    y = label["margin"]["top"] + count // label["across"] * (
+        label["size"]["height"] + label["padding"]["top"]
+    )
 
     name = data[0]
     for size in fontsizes:
@@ -25,14 +27,18 @@ def print_label(canvas, font, fontsizes, padding, data, label, count, drawlabel)
     else:
         center = len(name) // 2
         plusminus = 0
-        while plusminus < center and name[center + plusminus] != " " and name[center - plusminus] != " ":
+        while (
+            plusminus < center
+            and name[center + plusminus] != " "
+            and name[center - plusminus] != " "
+        ):
             plusminus += 1
         if name[center + plusminus] == " ":
-            data[0] = name[center + plusminus + 1:]
-            data.insert(0, name[:center + plusminus])
+            data[0] = name[center + plusminus + 1 :]
+            data.insert(0, name[: center + plusminus])
         else:
-            data[0] = name[center - plusminus + 1:]
-            data.insert(0, name[:center - plusminus])
+            data[0] = name[center - plusminus + 1 :]
+            data.insert(0, name[: center - plusminus])
 
     for size in fontsizes:
         if (label["size"]["height"] - 2 * padding) / len(data) >= size:
@@ -48,12 +54,21 @@ def print_label(canvas, font, fontsizes, padding, data, label, count, drawlabel)
 
     offset = 0
     for line in data:
-        canvas.drawString(padding + x, label["paper"]["height"] - y - offset - size - padding / 2, line)
+        canvas.drawString(
+            padding + x,
+            label["paper"]["height"] - y - offset - size - padding / 2,
+            line,
+        )
         offset += size
 
     if drawlabel:
-        canvas.rect(x, label["paper"]["height"] - y,
-                    label["size"]["width"], -label["size"]["height"], fill=0)
+        canvas.rect(
+            x,
+            label["paper"]["height"] - y,
+            label["size"]["width"],
+            -label["size"]["height"],
+            fill=0,
+        )
 
 
 def format_address(address, countries, country):
@@ -70,26 +85,26 @@ def format_address(address, countries, country):
 
     rows = [address["name"]]
 
-    if address['country']:
-        address_country = address['country'].lower()
+    if address["country"]:
+        address_country = address["country"].lower()
     else:
         print(f"Missing country for {address['name']}, assuming {country}.")
         address_country = country.lower()
 
     homeformatter = None
     for formatter in countries:
-        if not homeformatter and country.lower() in formatter['country']:
+        if not homeformatter and country.lower() in formatter["country"]:
             homeformatter = formatter
         if address_country in formatter["country"]:
-            if country.lower() in formatter['country']:
-                address['country'] = ""
-            for f in formatter['format']:
+            if country.lower() in formatter["country"]:
+                address["country"] = ""
+            for f in formatter["format"]:
                 rows.append(f.format(**address))
             break
     else:
         print(f"No formatter found for {address['country']}")
         if homeformatter:
-            for f in homeformatter['format']:
+            for f in homeformatter["format"]:
                 rows.append(f.format(**address))
 
     # remove empty lines
@@ -150,32 +165,59 @@ def get_address(header, row):
 
 
 def load_label(filename, brand, number):
+    label_name = f"{brand} {number}".lower()
     header = None
-    with open(filename, newline='') as tsvfile:
-        reader = csv.reader(tsvfile, delimiter='\t', quotechar='"')
+    with open(filename, newline="") as csvfile:
+        reader = csv.reader(csvfile, delimiter=",", quotechar='"')
         for row in reader:
             if not header:
                 header = row
                 continue
-            if row[0].lower() == brand.lower() and row[1].lower() == number.lower():
+            if row[0].lower() == label_name:
+                # Parse dimensions from new format
+                sheet_width = toLength(f"{row[1]} in")
+                sheet_height = toLength(f"{row[2]} in")
+                top_margin = toLength(f"{row[3]} in")
+                bottom_margin = toLength(f"{row[4]} in")
+                left_margin = toLength(f"{row[5]} in")
+                right_margin = toLength(f"{row[6]} in")
+                num_rows = int(row[7])
+                num_columns = int(row[8])
+                horizontal_gutter = toLength(f"{row[9]} in")
+                vertical_gutter = toLength(f"{row[10]} in")
+
+                # Calculate label dimensions
+                label_width = (
+                    sheet_width
+                    - left_margin
+                    - right_margin
+                    - (num_columns - 1) * horizontal_gutter
+                ) / num_columns
+                label_height = (
+                    sheet_height
+                    - top_margin
+                    - bottom_margin
+                    - (num_rows - 1) * vertical_gutter
+                ) / num_rows
+
                 return {
-                    "across": int(row[2]),
-                    "down": int(row[3]),
+                    "across": num_columns,
+                    "down": num_rows,
                     "size": {
-                        "width": toLength(row[4]),
-                        "height": toLength(row[5]),
+                        "width": label_width,
+                        "height": label_height,
                     },
                     "padding": {
-                        "left": toLength(row[6]),
-                        "top": toLength(row[7]),
+                        "left": horizontal_gutter,
+                        "top": vertical_gutter,
                     },
                     "paper": {
-                        "width": toLength(row[8]),
-                        "height": toLength(row[9]),
+                        "width": sheet_width,
+                        "height": sheet_height,
                     },
                     "margin": {
-                        "left": toLength(row[10]),
-                        "top": toLength(row[11]),
+                        "left": left_margin,
+                        "top": top_margin,
                     },
                 }
 
@@ -184,26 +226,81 @@ def load_label(filename, brand, number):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--brand', '-b', type=str, nargs='?', default="Avery",
-                        help='brand for address labels (Avery)')
-    parser.add_argument('--country', '-c', type=str, nargs='?', default="USA",
-                        help='country to not add to label and use for addresses with no country specified')
-    parser.add_argument('--drawbox', '-d', action='store_true',
-                        help='draw a box around the label')
-    parser.add_argument('--font', '-f', type=str, nargs='?', default="Times-Roman",
-                        help='font to use for label ("Times-Roman")')
-    parser.add_argument('--input', '-i', type=str, nargs='?', default="address.tsv",
-                        help='tsv file with addresses (address.tsv)')
-    parser.add_argument('--labels', '-l', type=str, nargs='?', default="labels.tsv",
-                        help='file with label definitions (labels.tsv)')
-    parser.add_argument('--mappings', '-m', type=str, nargs='?', default="mappings.json",
-                        help='file with mappings from tsv to address format')
-    parser.add_argument('--number', '-n', type=str, nargs='?', default="5160",
-                        help='label to use for printing (5160)')
-    parser.add_argument('--output', '-o', type=str, nargs='?', default="labels.pdf",
-                        help='pdf file that labels are written to (labels.pdf)')
-    parser.add_argument('--padding', '-p', type=str, nargs='?', default="4",
-                        help='extra padding inside the label (4)')
+    parser.add_argument(
+        "--brand",
+        "-b",
+        type=str,
+        nargs="?",
+        default="Avery",
+        help="brand for address labels (Avery)",
+    )
+    parser.add_argument(
+        "--country",
+        "-c",
+        type=str,
+        nargs="?",
+        default="USA",
+        help="country to not add to label and use for addresses with no country specified",
+    )
+    parser.add_argument(
+        "--drawbox", "-d", action="store_true", help="draw a box around the label"
+    )
+    parser.add_argument(
+        "--font",
+        "-f",
+        type=str,
+        nargs="?",
+        default="Times-Roman",
+        help='font to use for label ("Times-Roman")',
+    )
+    parser.add_argument(
+        "--input",
+        "-i",
+        type=str,
+        nargs="?",
+        default="address.tsv",
+        help="tsv file with addresses (address.tsv)",
+    )
+    parser.add_argument(
+        "--labels",
+        "-l",
+        type=str,
+        nargs="?",
+        default="LabelDimensions.csv",
+        help="file with label definitions (LabelDimensions.csv)",
+    )
+    parser.add_argument(
+        "--mappings",
+        "-m",
+        type=str,
+        nargs="?",
+        default="mappings.json",
+        help="file with mappings from tsv to address format",
+    )
+    parser.add_argument(
+        "--number",
+        "-n",
+        type=str,
+        nargs="?",
+        default="5160",
+        help="label to use for printing (5160)",
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=str,
+        nargs="?",
+        default="labels.pdf",
+        help="pdf file that labels are written to (labels.pdf)",
+    )
+    parser.add_argument(
+        "--padding",
+        "-p",
+        type=str,
+        nargs="?",
+        default="4",
+        help="extra padding inside the label (4)",
+    )
     args = parser.parse_args()
 
     # find the label
@@ -218,15 +315,17 @@ def main():
     fontsizes = [16, 14, 12, 10, 8, 6, 4]
 
     # create the canvas
-    canvas = Canvas(args.output, pagesize=(label["paper"]["width"], label["paper"]["height"]))
+    canvas = Canvas(
+        args.output, pagesize=(label["paper"]["width"], label["paper"]["height"])
+    )
     canvas.setFillColor(black)
 
     # load font, or use default font
     font = args.font
     if font not in canvas.getAvailableFonts():
-        for ext in ['ttf', 'ttc']:
+        for ext in ["ttf", "ttc"]:
             try:
-                pdfmetrics.registerFont(TTFont(font, f'{font}.{ext}'))
+                pdfmetrics.registerFont(TTFont(font, f"{font}.{ext}"))
                 break
             except:
                 pass
@@ -238,8 +337,8 @@ def main():
     tsv_mappings = json.load(open(args.mappings, "r"))
 
     # load tsv file and print each label
-    with open(args.input, newline='') as tsvfile:
-        reader = csv.reader(tsvfile, delimiter='\t', quotechar='"')
+    with open(args.input, newline="") as tsvfile:
+        reader = csv.reader(tsvfile, delimiter="\t", quotechar='"')
         count = 0
         header = None
         total = 0
@@ -255,7 +354,16 @@ def main():
             if address:
                 address = format_address(address, countries, args.country)
             if address:
-                print_label(canvas, font, fontsizes, padding, address, label, count, args.drawbox)
+                print_label(
+                    canvas,
+                    font,
+                    fontsizes,
+                    padding,
+                    address,
+                    label,
+                    count,
+                    args.drawbox,
+                )
                 count += 1
                 total += 1
             if count >= label["across"] * label["down"]:

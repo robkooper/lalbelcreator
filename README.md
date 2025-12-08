@@ -8,12 +8,25 @@ This will take a CSV file with addresses and create labels. The labels will be f
 
 The program uses 4 files as input, and a single file as output:
 
-| filename       | description                                                  |
-| -------------- | ------------------------------------------------------------ |
-| countries.json | list of formattings for countries, this will use the keys from the tsv file to format the label. |
-| example.tsv    | file with example addresses, goal is to have one address per country. |
-| labels.tsv     | list of labels, their size and other characteristics of the labels. |
-| mappings.json  | mapping from column names to keys used in the application.   |
+| filename              | description                                                  |
+| --------------------- | ------------------------------------------------------------ |
+| countries.json        | list of formattings for countries, this will use the keys from the tsv file to format the label. |
+| example.tsv           | file with example addresses, goal is to have one address per country. |
+| LabelDimensions.csv   | list of labels, their size and other characteristics of the labels. |
+| mappings.json         | mapping from column names to keys used in the application.   |
+
+## Label Dimensions
+
+The `LabelDimensions.csv` file contains specifications for various Avery label types. The dimensions were retrieved from [this GitHub Gist](https://gist.github.com/armadsen/5084458), which provides comprehensive label specifications in a standardized CSV format.
+
+The CSV includes the following columns:
+- `labelTypeName` - The brand and model number (e.g., "Avery 5160")
+- `labelSheetWidth`, `labelSheetHeight` - Paper dimensions in inches
+- `topMargin`, `bottomMargin`, `leftMargin`, `rightMargin` - Page margins
+- `numberOfRows`, `numberOfColumns` - Grid layout of labels on the sheet
+- `horizontalGutter`, `verticalGutter` - Spacing between labels
+
+The application calculates individual label dimensions automatically based on these specifications.
 
 ## Keys used in the code
 
@@ -39,7 +52,7 @@ The application takes the following arguments (all of them will have defaults)
 | argument                                                     | description              | default |
 | ------------------------------------------------------------ | ------------------------ | ------- |
 | --help<br />-h |show this help message and exit | |
-| --labels [LABELS]<br />-l [LABELS] | file with label definitions | labels.tsv |
+| --labels [LABELS]<br />-l [LABELS] | file with label definitions | LabelDimensions.csv |
 | --brand [BRAND]<br />-b [BRAND]                              | brand for address labels | Avery   |
 | --number [NUMBER]<br />-n [NUMBER] | label to use for printing | 5160 |
 | --padding [PADDING]<br />-p [PADDING] | extra padding inside the label | 4 |
